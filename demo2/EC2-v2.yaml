@@ -28,3 +28,10 @@ Mappings:
       AmazonLinux2: ami-0e4d9ed95865f3b40
     us-west-2:
       AmazonLinux2: ami-0cea098ed2ac54925
+Outputs:
+  InstanceIP:
+    Value:
+      Fn::GetAtt:
+      - TestInstance
+      - PublicIp
+    Description: Instance IP
