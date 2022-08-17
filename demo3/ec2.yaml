@@ -1,5 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Create EC2 with CF v2.0
+Parameters:
+  SecurityGroupIds:
+    Description: Security Group ID
+    Type: String 
+  Tags:
+    Description: Name Tag of EC2
+    Type: String
 Resources:
   TestInstance:
     Type: AWS::EC2::Instance
@@ -10,6 +17,12 @@ Resources:
         - Ref: AWS::Region
         - AmazonLinux2
       InstanceType: t2.micro
+      SecurityGroupIds: 
+        Fn::Split: [",", Ref: SecurityGroupIds]
+      Tags:
+        - Key: Name
+          Value:
+            Ref: Tags
 Mappings:
   AWSAMIRegionMap:
     us-east-1:

@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS CloudFormation Nested stacks - Root template 
 Parameters:
+  S3BucketName:
+    Description: S3 bucket name for the Nested Stacks. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Type: String
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-.]*[0-9a-zA-Z])*$
+    ConstraintDescription: Bucket name can include numbers, lowercase letters, uppercase letters, periods (.), and hyphens (-). It cannot start or end with a hyphen (-).
   EC2NameTag:
     Description: Name Tag of EC2
     Type: String
@@ -18,9 +23,7 @@ Resources:
       Parameters:
         SecurityGroupIds: !GetAtt SGStack.Outputs.SGID
         Tags: 
-        - Key: Name
-          Value: 
-            Ref: EC2NameTag
+          Ref: EC2NameTag
 Outputs:
   WebsiteURL:
     Value: !GetAtt EC2Stack.Outputs.InstanceIP
