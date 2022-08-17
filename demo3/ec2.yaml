@@ -10,10 +10,6 @@ Resources:
         - Ref: AWS::Region
         - AmazonLinux2
       InstanceType: t2.micro
-      Tags: 
-      - Key: Name
-        Value: 
-          Ref: EC2NameTag
 Mappings:
   AWSAMIRegionMap:
     us-east-1:
