@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create EC2 with CF v2.0
+Resources:
+  TestInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 
+        Fn::FindInMap:
+        - AWSAMIRegionMap
+        - Ref: AWS::Region
+        - AmazonLinux2
+      InstanceType: t2.micro
+Mappings:
+  AWSAMIRegionMap:
+    us-east-1:
+      AmazonLinux2: ami-090fa75af13c156b4
+    us-east-2:
+      AmazonLinux2: ami-051dfed8f67f095f5
+    us-west-1:
+      AmazonLinux2: ami-0e4d9ed95865f3b40
+    us-west-2:
+      AmazonLinux2: ami-0cea098ed2ac54925
