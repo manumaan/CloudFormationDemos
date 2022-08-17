@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS CloudFormation Nested stacks - Root template 
+Parameters:
+  EC2NameTag:
+    Description: Name Tag of EC2
+    Type: String
 Resources:
   SGStack:
     Type: AWS::CloudFormation::Stack
@@ -13,6 +17,10 @@ Resources:
       TimeoutInMinutes: 20
       Parameters:
         SecurityGroupIds: !GetAtt SGStack.Outputs.SGID
+        Tags: 
+        - Key: Name
+          Value: 
+            Ref: EC2NameTag
 Outputs:
   WebsiteURL:
     Value: !GetAtt EC2Stack.Outputs.InstanceIP
