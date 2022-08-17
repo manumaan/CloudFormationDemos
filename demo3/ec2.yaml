@@ -1,9 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Create EC2 with CF v2.0
-Parameters:
-  EC2NameTag:
-    Description: Name Tag
-    Type: String
 Resources:
   TestInstance:
     Type: AWS::EC2::Instance
