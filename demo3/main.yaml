@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: AWS CloudFormation Nested stacks - Root template 
+Resources:
+  SGStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.amazonaws.com/sg.yaml
+      TimeoutInMinutes: 20
+      Parameters:
+        AvailabilityZones: !Join
+          - ','
+          - !Ref AvailabilityZones
+        VPCCidr: !Ref VPCCidr
+        VPCName: !Ref VPCName
+        PublicSubnet1Cidr: !Ref PublicSubnet1Cidr
+        PublicSubnet2Cidr: !Ref PublicSubnet2Cidr
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub https://${S3BucketName}.s3.amazonaws.com/ec2.yaml
+      TimeoutInMinutes: 20
+      Parameters:
+        EnvironmentType: !Ref EnvironmentType
+        VpcId: !GetAtt VpcStack.Outputs.VpcId
+        SubnetId: !GetAtt VpcStack.Outputs.PublicSubnet1
+        WebServerInstanceProfile: !GetAtt IamStack.Outputs.WebServerInstanceProfile
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt EC2Stack.Outputs.PublicIP
