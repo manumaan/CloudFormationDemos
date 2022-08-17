@@ -1,5 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Create EC2 with CF v2.0
+Parameters:
+  EC2NameTag:
+    Description: Name Tag
+    Type: String
 Resources:
   TestInstance:
     Type: AWS::EC2::Instance
@@ -10,6 +14,10 @@ Resources:
         - Ref: AWS::Region
         - AmazonLinux2
       InstanceType: t2.micro
+      Tags: 
+      - Key: Name
+        Value: 
+          Ref: EC2NameTag
 Mappings:
   AWSAMIRegionMap:
     us-east-1:
