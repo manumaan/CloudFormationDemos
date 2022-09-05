@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create EC2 with CF
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  SGroup:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::SecurityGroup::GroupName'
+    ConstraintDescription: must be the name of Sec Group with 80 open.  
+
+Resources:
+  TestInstance:
+    Type: AWS::EC2::Instance
+    Metadata: 
+      Comment1: "httpd"
+      AWS::CloudFormation::Init:
+        configSets:
+          InstallHttpd:
+          - install_httpd
+          setup_httpd:
+          - setup_httpd
+        install_httpd:
+          packages:
+            yum:
+              httpd: []
+          files:
+            "/var/www/html/index.html":
+              content: "<html><title>Hello World Title</title><body><h1>header H1</h1></body></html>"
+
+        setup_httpd:
+              commands:
+                httpd:
+                  command: chkconfig httpd on
+                  ignoreErrors: 'false'
+              services:
+                sysvinit:
+                  httpd:
+                    enabled: 'true'
+                    ensureRunning: 'true'    
+    Properties:
+      ImageId: ami-090fa75af13c156b4
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: KeyName
+      SecurityGroups: 
+        Fn::Split: [",", Ref: SGroup]
+      UserData: 
+        Fn::Base64:
+          Fn::Join:
+          - ''
+          - - "#!/bin/bash -xe\n"
+            - 'yum update aws-cfn-bootstrap
+
+              '
+            - "# Install the files and packages from the metadata\n"
+            - "/opt/aws/bin/cfn-init "
+            - "    --stack "
+            - Ref: AWS::StackName
+            - "    --resource TestInstance "
+            - "     --configsets InstallHttpd,setup_httpd"
+            - "    --region "
+            - Ref: AWS::Region
