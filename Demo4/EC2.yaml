@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create EC2 with CF
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  SGroup:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: 'AWS::EC2::SecurityGroup::GroupName'
+    ConstraintDescription: must be the name of Sec Group with 80 open.  
+
+Resources:
+  TestInstance:
+    Type: AWS::EC2::Instance
+    Metadata: 
+      Comment1: "httpd"
+      AWS::CloudFormation::Init: 
+        config: 
+          packages: 
+            yum:
+              httpd: []
+              php: []
+              nano: []    
+    Properties:
+      ImageId: ami-090fa75af13c156b4
+      InstanceType: t2.micro
+      KeyName: 
+        Ref: KeyName
+      SecurityGroups: 
+        Fn::Split: [",", Ref: SGroup]
+      UserData: 
+        Fn::Base64:
+          Fn::Join:
+          - ''
+          - - "#!/bin/bash -xe\n"
+            - 'yum update aws-cfn-bootstrap
+
+              '
+            - "# Install the files and packages from the metadata\n"
+            - "/opt/aws/bin/cfn-init "
+            - "    --stack "
+            - Ref: AWS::StackName
+            - "    --resource TestInstance "
+            - "    --region "
+            - Ref: AWS::Region
