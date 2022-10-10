@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create RDS with CF
+Parameters: 
+  DBUserName:
+    Description: DB User Name
+    Type: String
+    AllowedPattern: "^[a-zA-Z0-9]*$"
+  DBPassword:
+    NoEcho: True
+    Description: DB Admin Password
+    Type: String
+    AllowedPattern: "^[a-zA-Z0-9]*$"
+
+Resources:
+  MyRDSInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBName: MyRDSInstance
+      AllocatedStorage: '20'
+      DBInstanceClass: db.t2.micro
+      Engine: mysql
+      MasterUsername: !Sub '{{resolve:secretsmanager:MyRDSSecretValue:SecretString:username}}'
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:MyRDSSecret:SecretString:password}}'
+  MyRDSInstance2:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      DBName: MyRDSInstance
+      AllocatedStorage: '20'
+      DBInstanceClass: db.t2.micro
+      Engine: mysql
+      MasterUsername: 
+        Ref: DBUserName
+      MasterUserPassword: 
+        Ref: DBPassword
