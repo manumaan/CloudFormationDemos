@@ -10,6 +10,10 @@ Parameters:
     Description: DB Admin Password
     Type: String
     AllowedPattern: "^[a-zA-Z0-9]*$"
+  SGroup:
+    Description: Security Group for the Database
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    ConstraintDescription: must be the name of Sec Group with 80 open.  
 
 Resources:
   MyRDSInstance:
@@ -19,7 +23,7 @@ Resources:
       AllocatedStorage: '20'
       DBInstanceClass: db.t2.micro
       Engine: mysql
-      MasterUsername: !Sub '{{resolve:secretsmanager:MyRDSSecretValue:SecretString:username}}'
+      MasterUsername: !Sub '{{resolve:secretsmanager:MyRDSSecret:SecretString:username}}'
       MasterUserPassword: !Sub '{{resolve:secretsmanager:MyRDSSecret:SecretString:password}}'
   MyRDSInstance2:
     Type: 'AWS::RDS::DBInstance'
@@ -28,6 +32,8 @@ Resources:
       AllocatedStorage: '20'
       DBInstanceClass: db.t2.micro
       Engine: mysql
+      VPCSecurityGroups: 
+        - !Ref SGroup
       MasterUsername: 
         Ref: DBUserName
       MasterUserPassword: 
