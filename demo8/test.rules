@@ -1,1 +1,5 @@
-AWS::EC2::Instance InstanceType == /.nano|.micro|.small/
+AWS::EC2::Instance {
+    Properties {
+        InstanceType == /.nano|.micro|.small/
+    }
+}
